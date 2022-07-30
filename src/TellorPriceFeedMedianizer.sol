@@ -145,7 +145,6 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
     * @notify Update the median price
     * @param feeReceiver The address that will receive a SF payout for calling this function
     */
-    event log(uint);
     function updateResult(address feeReceiver) external {
         // The relayer must not be null
         require(address(rewardRelayer) != address(0), "TellorPriceFeedMedianizer/null-reward-relayer");
@@ -158,8 +157,6 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
 
         // Perform price and time checks
         require(aggregatorPrice > 0, "TellorPriceFeedMedianizer/invalid-price-feed");
-        emit log(aggregatorTimestamp);
-        emit log(tellorAggregatorTimestamp);
         require(both(aggregatorTimestamp > 0, aggregatorTimestamp > tellorAggregatorTimestamp), "TellorPriceFeedMedianizer/invalid-timestamp");
 
         // Update state
