@@ -5,6 +5,7 @@ This is a suite of contracts that can pull data from Tellor price feeds. There a
 Contracts that require state updates can be connected to a separate contract that pays out rewards for updates in the form of GEB system coins.
 
 Tellor docs: https://tellor.io/docs/
+
 Query builder: https://queryidbuilder.herokuapp.com/spotprice
 
 ## Bug Bounty
