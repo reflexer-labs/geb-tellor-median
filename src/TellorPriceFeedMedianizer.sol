@@ -105,7 +105,7 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
           periodSize = data;
         }
         else if (parameter == "staleThreshold") {
-          require(data > 1, "TellorPriceFeedMedianizer/invalid-stale-threshold");
+          require(data > 0, "TellorPriceFeedMedianizer/invalid-stale-threshold");
           staleThreshold = data;
         }
         else revert("TellorPriceFeedMedianizer/modify-unrecognized-param");

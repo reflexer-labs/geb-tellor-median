@@ -172,7 +172,7 @@ contract TellorTWAP is GebMath, UsingTellor {
           maxWindowSize = data;
         }
         else if (parameter == "staleThreshold") {
-          require(data > 1, "TellorTWAP/invalid-stale-threshold");
+          require(data > 0, "TellorTWAP/invalid-stale-threshold");
           staleThreshold = data;
         }
         else revert("TellorTWAP/modify-unrecognized-param");

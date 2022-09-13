@@ -85,7 +85,7 @@ contract TellorRelayer is GebMath, UsingTellor {
     */
     function modifyParameters(bytes32 parameter, uint256 data) external isAuthorized {
         if (parameter == "staleThreshold") {
-          require(data > 1, "TellorRelayer/invalid-stale-threshold");
+          require(data > 0, "TellorRelayer/invalid-stale-threshold");
           staleThreshold = data;
         }
         else revert("TellorRelayer/modify-unrecognized-param");
