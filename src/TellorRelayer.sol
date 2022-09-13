@@ -97,9 +97,6 @@ contract TellorRelayer is GebMath, UsingTellor {
     * @notice Fetch the latest medianResult or revert if is is null, if the price is stale or if TellorAggregator is null
     **/
     function read() external view returns (uint256) {
-        // The relayer must not be null
-        require(address(tellor) != address(0), "TellorRelayer/null-aggregator");
-
         // Fetch values from Tellor
         (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
             getCurrentValue(queryId);
@@ -114,8 +111,6 @@ contract TellorRelayer is GebMath, UsingTellor {
     * @notice Fetch the latest medianResult and whether it is valid or not
     **/
     function getResultWithValidity() external view returns (uint256, bool) {
-        if (address(tellor) == address(0)) return (0, false);
-
         // Fetch values from Tellor
         (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
             getCurrentValue(queryId);
