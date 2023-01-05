@@ -102,7 +102,7 @@ contract TellorRelayer is GebMath, UsingTellor {
 
         // Fetch values from Tellor
         (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
-            getCurrentValue(queryId);
+            getDataBefore(queryId, block.timestamp - 15 minutes);
         require(success, "TellorTWAP/failed-to-query-tellor");
 
         uint256 medianPrice = multiply(abi.decode(tellorResponse, (uint256)), 10 ** uint(multiplier));
@@ -118,7 +118,7 @@ contract TellorRelayer is GebMath, UsingTellor {
 
         // Fetch values from Tellor
         (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
-            getCurrentValue(queryId);
+            getDataBefore(queryId, block.timestamp - 15 minutes);
         require(success, "TellorTWAP/failed-to-query-tellor");
 
         uint256 medianPrice = multiply(abi.decode(tellorResponse, (uint256)), 10 ** uint(multiplier));

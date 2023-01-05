@@ -1,0 +1,1001 @@
+{
+  "_format": "ethers-rs-sol-cache-3",
+  "paths": {
+    "artifacts": "out",
+    "build_infos": "out/build-info",
+    "sources": "src",
+    "tests": "test",
+    "scripts": "script",
+    "libraries": [
+      "lib"
+    ]
+  },
+  "files": {
+    "lib/ds-test/src/test.sol": {
+      "lastModificationDate": 1672396621739,
+      "contentHash": "962996f0e05d5218857a538a62d7c47e",
+      "sourceName": "lib/ds-test/src/test.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.5.0",
+      "artifacts": {
+        "DSTest": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "test.sol/DSTest.json"
+        }
+      }
+    },
+    "lib/ds-token/lib/ds-math/src/math.sol": {
+      "lastModificationDate": 1672396627031,
+      "contentHash": "8c550fcfa8bd4f7feb87aaf59c230caf",
+      "sourceName": "lib/ds-token/lib/ds-math/src/math.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">0.4.13",
+      "artifacts": {
+        "DSMath": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "math.sol/DSMath.json"
+        }
+      }
+    },
+    "lib/ds-token/lib/ds-stop/lib/ds-auth/src/auth.sol": {
+      "lastModificationDate": 1672396632282,
+      "contentHash": "8c01a8e97f2125dc1916eff23852b7cf",
+      "sourceName": "lib/ds-token/lib/ds-stop/lib/ds-auth/src/auth.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.6.7",
+      "artifacts": {
+        "DSAuth": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "auth.sol/DSAuth.json"
+        },
+        "DSAuthEvents": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "auth.sol/DSAuthEvents.json"
+        },
+        "DSAuthority": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "auth.sol/DSAuthority.json"
+        }
+      }
+    },
+    "lib/ds-token/lib/ds-stop/lib/ds-note/src/note.sol": {
+      "lastModificationDate": 1672396633503,
+      "contentHash": "cff077720b1444b4e848afcabf67cc2d",
+      "sourceName": "lib/ds-token/lib/ds-stop/lib/ds-note/src/note.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.4.23",
+      "artifacts": {
+        "DSNote": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "note.sol/DSNote.json"
+        }
+      }
+    },
+    "lib/ds-token/lib/ds-stop/src/stop.sol": {
+      "lastModificationDate": 1672396628515,
+      "contentHash": "6ab15ee97d2d16971c1eb621fbb73fa8",
+      "sourceName": "lib/ds-token/lib/ds-stop/src/stop.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-token/lib/ds-stop/lib/ds-auth/src/auth.sol",
+        "lib/ds-token/lib/ds-stop/lib/ds-note/src/note.sol"
+      ],
+      "versionRequirement": ">=0.4.23",
+      "artifacts": {
+        "DSStop": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "stop.sol/DSStop.json"
+        }
+      }
+    },
+    "lib/ds-token/lib/erc20/src/erc20.sol": {
+      "lastModificationDate": 1672396635209,
+      "contentHash": "91b67c77828ed3dad97bd48a2daaa1d3",
+      "sourceName": "lib/ds-token/lib/erc20/src/erc20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">0.4.20",
+      "artifacts": {
+        "ERC20": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "erc20.sol/ERC20.json"
+        },
+        "ERC20Events": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "erc20.sol/ERC20Events.json"
+        }
+      }
+    },
+    "lib/ds-token/src/base.sol": {
+      "lastModificationDate": 1672396621783,
+      "contentHash": "509d1a034cf86ed3a0167e16df1cb926",
+      "sourceName": "lib/ds-token/src/base.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-token/lib/ds-math/src/math.sol",
+        "lib/ds-token/lib/erc20/src/erc20.sol"
+      ],
+      "versionRequirement": ">=0.4.23, <0.7.0",
+      "artifacts": {
+        "DSTokenBase": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "base.sol/DSTokenBase.json"
+        }
+      }
+    },
+    "lib/ds-token/src/token.sol": {
+      "lastModificationDate": 1672396621784,
+      "contentHash": "8744c7ddc9dfc48730487317f2bb6088",
+      "sourceName": "lib/ds-token/src/token.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-token/lib/ds-math/src/math.sol",
+        "lib/ds-token/lib/ds-stop/lib/ds-auth/src/auth.sol",
+        "lib/ds-token/lib/ds-stop/lib/ds-note/src/note.sol",
+        "lib/ds-token/lib/ds-stop/src/stop.sol",
+        "lib/ds-token/lib/erc20/src/erc20.sol",
+        "lib/ds-token/src/base.sol"
+      ],
+      "versionRequirement": ">=0.4.23, <0.7.0",
+      "artifacts": {
+        "DSToken": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "token.sol/DSToken.json"
+        }
+      }
+    },
+    "lib/geb-treasury-reimbursement/src/math/GebMath.sol": {
+      "lastModificationDate": 1672396635252,
+      "contentHash": "b6f9d54d65c4c8982151f848a607b9a8",
+      "sourceName": "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "GebMath": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "GebMath.sol/GebMath.json"
+        }
+      }
+    },
+    "lib/geb-treasury-reimbursement/src/reimbursement/single/IncreasingTreasuryReimbursement.sol": {
+      "lastModificationDate": 1672396635253,
+      "contentHash": "ca41b718d91e8a10c218667d0163bf97",
+      "sourceName": "lib/geb-treasury-reimbursement/src/reimbursement/single/IncreasingTreasuryReimbursement.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "IncreasingTreasuryReimbursement": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "IncreasingTreasuryReimbursement.sol/IncreasingTreasuryReimbursement.json"
+        },
+        "StabilityFeeTreasuryLike": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "IncreasingTreasuryReimbursement.sol/StabilityFeeTreasuryLike.json"
+        }
+      }
+    },
+    "lib/geb-treasury-reimbursement/src/relayer/IncreasingRewardRelayer.sol": {
+      "lastModificationDate": 1672396635253,
+      "contentHash": "b05eb963aa579af2384cb66a388e2e6b",
+      "sourceName": "lib/geb-treasury-reimbursement/src/relayer/IncreasingRewardRelayer.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+        "lib/geb-treasury-reimbursement/src/reimbursement/single/IncreasingTreasuryReimbursement.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "IncreasingRewardRelayer": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "IncreasingRewardRelayer.sol/IncreasingRewardRelayer.json"
+        }
+      }
+    },
+    "src/TellorPriceFeedMedianizer.sol": {
+      "lastModificationDate": 1672914028765,
+      "contentHash": "adf703942afa97cdc1f3657aacfa3234",
+      "sourceName": "src/TellorPriceFeedMedianizer.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+        "src/usingTellor/UsingTellor.sol",
+        "src/usingTellor/interface/ITellor.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "IncreasingRewardRelayerLike": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorPriceFeedMedianizer.sol/IncreasingRewardRelayerLike.json"
+        },
+        "TellorPriceFeedMedianizer": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorPriceFeedMedianizer.sol/TellorPriceFeedMedianizer.json"
+        }
+      }
+    },
+    "src/TellorRelayer.sol": {
+      "lastModificationDate": 1672649446161,
+      "contentHash": "e48caddec55cdd9d6bc5132ca7466a9b",
+      "sourceName": "src/TellorRelayer.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+        "src/usingTellor/UsingTellor.sol",
+        "src/usingTellor/interface/ITellor.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "TellorRelayer": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorRelayer.sol/TellorRelayer.json"
+        }
+      }
+    },
+    "src/TellorTWAP.sol": {
+      "lastModificationDate": 1672649030462,
+      "contentHash": "da1fb8ddbca328d1b98a2c058e0cbcec",
+      "sourceName": "src/TellorTWAP.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+        "src/usingTellor/UsingTellor.sol",
+        "src/usingTellor/interface/ITellor.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "IncreasingRewardRelayerLike": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorTWAP.sol/IncreasingRewardRelayerLike.json"
+        },
+        "TellorTWAP": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorTWAP.sol/TellorTWAP.json"
+        }
+      }
+    },
+    "src/test/TellorPriceFeedMedianizer.t.sol": {
+      "lastModificationDate": 1672913400750,
+      "contentHash": "b4940d9eb2ffbb6f62e24711963fa2a7",
+      "sourceName": "src/test/TellorPriceFeedMedianizer.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src/test.sol",
+        "lib/ds-token/lib/ds-math/src/math.sol",
+        "lib/ds-token/lib/ds-stop/lib/ds-auth/src/auth.sol",
+        "lib/ds-token/lib/ds-stop/lib/ds-note/src/note.sol",
+        "lib/ds-token/lib/ds-stop/src/stop.sol",
+        "lib/ds-token/lib/erc20/src/erc20.sol",
+        "lib/ds-token/src/base.sol",
+        "lib/ds-token/src/token.sol",
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+        "lib/geb-treasury-reimbursement/src/reimbursement/single/IncreasingTreasuryReimbursement.sol",
+        "lib/geb-treasury-reimbursement/src/relayer/IncreasingRewardRelayer.sol",
+        "src/TellorPriceFeedMedianizer.sol",
+        "src/test/geb/MockTreasury.sol",
+        "src/usingTellor/TellorPlayground.sol",
+        "src/usingTellor/UsingTellor.sol",
+        "src/usingTellor/interface/ITellor.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "Hevm": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorPriceFeedMedianizer.t.sol/Hevm.json"
+        },
+        "TellorPriceFeedMedianizerTest": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorPriceFeedMedianizer.t.sol/TellorPriceFeedMedianizerTest.json"
+        }
+      }
+    },
+    "src/test/TellorRelayer.t.sol": {
+      "lastModificationDate": 1672649873071,
+      "contentHash": "b87a24d93e914ea6e7f1f1ac52b117cd",
+      "sourceName": "src/test/TellorRelayer.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src/test.sol",
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+        "src/TellorRelayer.sol",
+        "src/usingTellor/TellorPlayground.sol",
+        "src/usingTellor/UsingTellor.sol",
+        "src/usingTellor/interface/ITellor.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "Hevm": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorRelayer.t.sol/Hevm.json"
+        },
+        "TellorRelayerTest": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorRelayer.t.sol/TellorRelayerTest.json"
+        }
+      }
+    },
+    "src/test/TellorTWAP.t.sol": {
+      "lastModificationDate": 1671922795889,
+      "contentHash": "6c367d8b6581271d8d6da111fa577fae",
+      "sourceName": "src/test/TellorTWAP.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src/test.sol",
+        "lib/ds-token/lib/ds-math/src/math.sol",
+        "lib/ds-token/lib/ds-stop/lib/ds-auth/src/auth.sol",
+        "lib/ds-token/lib/ds-stop/lib/ds-note/src/note.sol",
+        "lib/ds-token/lib/ds-stop/src/stop.sol",
+        "lib/ds-token/lib/erc20/src/erc20.sol",
+        "lib/ds-token/src/base.sol",
+        "lib/ds-token/src/token.sol",
+        "lib/geb-treasury-reimbursement/src/math/GebMath.sol",
+        "lib/geb-treasury-reimbursement/src/reimbursement/single/IncreasingTreasuryReimbursement.sol",
+        "lib/geb-treasury-reimbursement/src/relayer/IncreasingRewardRelayer.sol",
+        "src/TellorTWAP.sol",
+        "src/test/geb/MockTreasury.sol",
+        "src/usingTellor/TellorPlayground.sol",
+        "src/usingTellor/UsingTellor.sol",
+        "src/usingTellor/interface/ITellor.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "Hevm": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorTWAP.t.sol/Hevm.json"
+        },
+        "TellorTWAPTest": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorTWAP.t.sol/TellorTWAPTest.json"
+        }
+      }
+    },
+    "src/test/geb/MockTreasury.sol": {
+      "lastModificationDate": 1671922795889,
+      "contentHash": "2c5b839be834b5248cb85df218dad645",
+      "sourceName": "src/test/geb/MockTreasury.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "MockRevertableTreasury": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "MockTreasury.sol/MockRevertableTreasury.json"
+        },
+        "MockTreasury": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "MockTreasury.sol/MockTreasury.json"
+        },
+        "SystemCoinLike": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "MockTreasury.sol/SystemCoinLike.json"
+        }
+      }
+    },
+    "src/test/mock/MockRewardRelayer.sol": {
+      "lastModificationDate": 1671922795889,
+      "contentHash": "7895a319c4d565f914db5c1c1d290724",
+      "sourceName": "src/test/mock/MockRewardRelayer.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "MockRewardRelayer": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "MockRewardRelayer.sol/MockRewardRelayer.json"
+        }
+      }
+    },
+    "src/usingTellor/TellorPlayground.sol": {
+      "lastModificationDate": 1671922795889,
+      "contentHash": "f902044cca9a65eb162d1783697ba3d6",
+      "sourceName": "src/usingTellor/TellorPlayground.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "TellorPlayground": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "TellorPlayground.sol/TellorPlayground.json"
+        }
+      }
+    },
+    "src/usingTellor/UsingTellor.sol": {
+      "lastModificationDate": 1672649030463,
+      "contentHash": "b8986bcf55905530eb7aa03cfe38b0a3",
+      "sourceName": "src/usingTellor/UsingTellor.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/usingTellor/interface/ITellor.sol"
+      ],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "UsingTellor": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "UsingTellor.sol/UsingTellor.json"
+        }
+      }
+    },
+    "src/usingTellor/interface/ITellor.sol": {
+      "lastModificationDate": 1672649030463,
+      "contentHash": "9a71d068d35178a46e83ce2a42075e23",
+      "sourceName": "src/usingTellor/interface/ITellor.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.6.7",
+      "artifacts": {
+        "ITellor": {
+          "0.6.7+commit.b8d736ae.Darwin.appleclang": "ITellor.sol/ITellor.json"
+        }
+      }
+    }
+  }
+}
