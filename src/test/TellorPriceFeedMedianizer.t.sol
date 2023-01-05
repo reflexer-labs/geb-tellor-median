@@ -162,27 +162,29 @@ contract TellorPriceFeedMedianizerTest is DSTest {
     //     tellorMedianizer.updateResult(address(0));
     //     assertEq(rai.balanceOf(address(this)), maxCallerReward + callerReward * 2);
     // }
-    // function test_reward_other_multiple_times() public {
-    //     aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
 
-    //     // First
-    //     tellorMedianizer.updateResult(address(0x123));
-    //     assertEq(rai.balanceOf(address(0x123)), callerReward);
+    function test_reward_other_multiple_times() public {
+        aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
+        hevm.warp(now + timeDelayAdjustment);
+        // First
+        tellorMedianizer.updateResult(address(0x123));
+        assertEq(rai.balanceOf(address(0x123)), callerReward);
 
-    //     // Second
-    //     hevm.warp(now + tellorMedianizer.periodSize());
-    //     aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
-    //     tellorMedianizer.updateResult(address(0x123));
-    //     assertEq(rai.balanceOf(address(0x123)), callerReward * 2);
+        // Second
+        // hevm.warp(now + tellorMedianizer.periodSize());
+        aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
+        hevm.warp(now + timeDelayAdjustment);
+        tellorMedianizer.updateResult(address(0x123));
+        assertEq(rai.balanceOf(address(0x123)), callerReward * 2);
 
-    //     for (uint i = 0; i < 10; i++) {
-    //       hevm.warp(now + periodSize);
-    //       aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
-    //       tellorMedianizer.updateResult(address(0x123));
-    //     }
+        // for (uint i = 0; i < 10; i++) {
+        //   hevm.warp(now + periodSize);
+        //   aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
+        //   tellorMedianizer.updateResult(address(0x123));
+        // }
 
-    //     assertEq(rai.balanceOf(address(0x123)), callerReward * 12);
-    // }
+        // assertEq(rai.balanceOf(address(0x123)), callerReward * 12);
+    }
     
     function testFail_read_when_stale() public {
         aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
@@ -204,7 +206,7 @@ contract TellorPriceFeedMedianizerTest is DSTest {
 
     function test_get_result_with_validity_when_stale() public {
         aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
-        hevm.warp(now + timeDelayAdjustment);
+        // hevm.warp(now + timeDelayAdjustment);
         tellorMedianizer.updateResult(address(this));
         (uint256 price, bool valid) = tellorMedianizer.getResultWithValidity();
         assertEq(price, 1.1 ether);        
