@@ -61,8 +61,10 @@ contract TellorTWAPTest is DSTest {
         treasury = new MockTreasury(address(rai));
         rai.transfer(address(treasury), initTokenAmount);
 
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -159,8 +161,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_query_id() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           bytes32(0),
           windowSize,
           maxWindowSize,
@@ -169,8 +172,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_granularity() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -179,8 +183,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_multiplier() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -189,8 +194,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_window_size() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           0,
           maxWindowSize,
@@ -199,8 +205,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_window_not_evenly_divisible() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -367,9 +374,11 @@ contract TellorTWAPTest is DSTest {
         treasury = new MockTreasury(address(rai));
         rai.transfer(address(treasury), initTokenAmount);
 
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+
         // Create the TWAP
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           2 hours,
           4 hours,
@@ -428,9 +437,11 @@ contract TellorTWAPTest is DSTest {
         treasury = new MockTreasury(address(rai));
         rai.transfer(address(treasury), initTokenAmount);
 
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+
         // Create the TWAP
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           2 hours,
           4 hours,

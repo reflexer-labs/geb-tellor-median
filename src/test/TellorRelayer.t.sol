@@ -33,7 +33,8 @@ contract TellorRelayerTest is DSTest {
         queryNonce = 0;
 
         aggregator = new TellorPlayground();
-        relayer    = new TellorRelayer(address(aggregator), queryId, staleThreshold);
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+        relayer    = new TellorRelayer(aggregatorAddress, queryId, staleThreshold);
     }
 
     function test_change_uint_params() public {

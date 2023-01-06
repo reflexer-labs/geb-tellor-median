@@ -55,9 +55,11 @@ contract TellorPriceFeedMedianizerTest is DSTest {
         treasury = new MockTreasury(address(rai));
         rai.transfer(address(treasury), initTokenAmount);
 
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+
         // Create median
         tellorMedianizer = new TellorPriceFeedMedianizer(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           periodSize
         );
