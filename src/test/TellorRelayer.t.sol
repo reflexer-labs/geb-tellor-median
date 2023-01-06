@@ -53,12 +53,12 @@ contract TellorRelayerTest is DSTest {
     }
     function test_read() public {
         aggregator.submitValue(queryId, abi.encode(uint256(1 ether)), queryNonce++, queryData);
-        hevm.warp(now + 16 minutes);
+
         relayer.read();
     }
     function test_getResultWithValidity_null_price() public {
         aggregator.submitValue(queryId, abi.encode(uint256(0)), queryNonce++, queryData);
-        hevm.warp(now + 16 minutes);
+
         (uint median, bool validity) = relayer.getResultWithValidity();
         assertEq(median, 0);
         assertTrue(!validity);
