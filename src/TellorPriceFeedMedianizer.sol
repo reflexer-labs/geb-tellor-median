@@ -2,15 +2,13 @@ pragma solidity 0.6.7;
 
 import "geb-treasury-reimbursement/math/GebMath.sol";
 
-import "ds-test/test.sol";
-
 import "./usingTellor/UsingTellor.sol";
 
 abstract contract IncreasingRewardRelayerLike {
     function reimburseCaller(address) virtual external;
 }
 
-contract TellorPriceFeedMedianizer is GebMath, UsingTellor, DSTest {
+contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
     // --- Auth ---
     mapping (address => uint) public authorizedAccounts;
     /**
