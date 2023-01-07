@@ -143,7 +143,9 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor, DSTest {
     * @notice Fetch the latest medianResult and whether it is valid or not
     **/
     function getResultWithValidity() external view returns (uint256,bool) {
-        return (medianPrice, both(medianPrice > 0, subtract(now, tellorAggregatorTimestamp) <= multiply(periodSize, staleThreshold)));
+         // Use relative timestamp for comparison
+        uint256 relativeNow = subtract(now, timeDelay);
+        return (medianPrice, both(medianPrice > 0, subtract(relativeNow, tellorAggregatorTimestamp) <= multiply(periodSize, staleThreshold)));
     }
 
     // --- Median Updates ---
@@ -156,22 +158,12 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor, DSTest {
         require(address(rewardRelayer) != address(0), "TellorPriceFeedMedianizer/null-reward-relayer");
 
         uint256 beforeTime = block.timestamp - timeDelay;
-        emit log_named_uint("beforeTime", beforeTime);
-
 
         try this.getDataBefore(queryId, block.timestamp - timeDelay) returns (bytes memory _value, uint256 _timestampRetrieved) {
             
             uint256 aggregatorPrice = multiply(abi.decode(_value, (uint256)), 10 ** uint(multiplier));
-
-            // emit log("_value");
-            emit log_named_bytes("_value", _value);
-            emit log_named_uint("_timestampRetrieved", _timestampRetrieved);
-            
             
             require(aggregatorPrice > 0, "TellorPriceFeedMedianizer/invalid-price-feed");
-            
-            emit log_named_uint("tellorAggregatorTimestamp pre update",tellorAggregatorTimestamp);
-            
 
             require(both(_timestampRetrieved > 0, _timestampRetrieved > tellorAggregatorTimestamp), "TellorPriceFeedMedianizer/invalid-timestamp");
 
@@ -179,10 +171,6 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor, DSTest {
             medianPrice               = multiply(uint(aggregatorPrice), 10 ** uint(multiplier));
             tellorAggregatorTimestamp = _timestampRetrieved;
             lastUpdateTime            = now;
-
-            emit log_named_uint("tellorAggregatorTimestamp ppost update",tellorAggregatorTimestamp);
-
-            emit log("              ");
 
             // Emit the event
             emit UpdateResult(medianPrice, lastUpdateTime);
