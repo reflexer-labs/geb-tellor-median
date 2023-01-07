@@ -22,6 +22,7 @@ contract TellorRelayerTest is DSTest {
 
     uint256 startTime      = 1577836800;
     uint256 staleThreshold = 6 hours;
+    uint256 timeDelay      = 900; // 15 minutes
 
     function setUp() public {
         hevm = Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
@@ -54,12 +55,12 @@ contract TellorRelayerTest is DSTest {
     }
     function test_read() public {
         aggregator.submitValue(queryId, abi.encode(uint256(1 ether)), queryNonce++, queryData);
-
+        hevm.warp(now + timeDelay + 1);
         relayer.read();
     }
     function test_getResultWithValidity_null_price() public {
         aggregator.submitValue(queryId, abi.encode(uint256(0)), queryNonce++, queryData);
-
+        hevm.warp(now + timeDelay + 1);
         (uint median, bool validity) = relayer.getResultWithValidity();
         assertEq(median, 0);
         assertTrue(!validity);
