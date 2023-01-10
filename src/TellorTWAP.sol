@@ -48,6 +48,8 @@ contract TellorTWAP is GebMath, UsingTellor {
     uint256 public converterResultCumulative;
     // Latest result
     uint256 private medianResult;                   // [wad]
+    // Time delay to get prices before (15 minutes)
+    uint256 public timeDelay = 900;
     /**
       The ideal amount of time over which the moving average should be computed, e.g. 24 hours.
       In practice it can and most probably will be different than the actual window over which the contract medianizes.
@@ -61,7 +63,7 @@ contract TellorTWAP is GebMath, UsingTellor {
     uint8   public multiplier = 1;
     // Number of updates in the window
     uint8   public granularity;
-
+    
     // You want to change these every deployment
     uint256 public staleThreshold = 3;
     bytes32 public symbol         = "ethusd";
@@ -91,7 +93,7 @@ contract TellorTWAP is GebMath, UsingTellor {
     event UpdateResult(uint256 result);
 
     constructor(
-      address tellorAddress_,
+      address payable tellorAddress_,
       bytes32 queryId_,
       uint256 windowSize_,
       uint256 maxWindowSize_,
@@ -225,40 +227,42 @@ contract TellorTWAP is GebMath, UsingTellor {
         // Check delay between calls
         require(elapsedTime >= periodSize, "TellorTWAP/wait-more");
 
-        (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
-            getCurrentValue(queryId);
-        require(success, "TellorTWAP/failed-to-query-tellor");
+        try this.getDataBefore(queryId, block.timestamp - timeDelay) returns (bytes memory _value, uint256 _timestampRetrieved) {
+          uint256 aggregatorResult     = abi.decode(_value, (uint256));
 
-        uint256 aggregatorResult     = abi.decode(tellorResponse, (uint256));
+          require(aggregatorResult > 0, "TellorTWAP/invalid-feed-result");
+          require(both(_timestampRetrieved > 0, _timestampRetrieved > tellorAggregatorTimestamp), "TellorTWAP/invalid-timestamp");
 
-        require(aggregatorResult > 0, "TellorTWAP/invalid-feed-result");
-        require(both(aggregatorTimestamp > 0, aggregatorTimestamp > tellorAggregatorTimestamp), "TellorTWAP/invalid-timestamp");
+          // Get current first observation timestamp
+          uint256 timeSinceFirst;
+          if (updates > 0) {
+            TellorObservation memory firstTellorObservation = getFirstObservationInWindow();
+            timeSinceFirst = subtract(now, firstTellorObservation.timestamp);
+          } else {
+            timeSinceFirst = elapsedTime;
+          }
 
-        // Get current first observation timestamp
-        uint256 timeSinceFirst;
-        if (updates > 0) {
-          TellorObservation memory firstTellorObservation = getFirstObservationInWindow();
-          timeSinceFirst = subtract(now, firstTellorObservation.timestamp);
-        } else {
-          timeSinceFirst = elapsedTime;
+          // Update the observations array
+          updateObservations(elapsedTime, aggregatorResult);
+
+          // Update var state
+          medianResult              = converterResultCumulative / timeSinceFirst;
+          updates                   = addition(updates, 1);
+          tellorAggregatorTimestamp = _timestampRetrieved;
+          lastUpdateTime            = now;
+
+           emit UpdateResult(medianResult);
+
+          // Get final fee receiver
+          address finalFeeReceiver = (feeReceiver == address(0)) ? msg.sender : feeReceiver;
+
+          // Send the reward
+          rewardRelayer.reimburseCaller(finalFeeReceiver);
+
+        } catch {
+            revert("TellorTWAP/failed-to-query-tellor");
         }
 
-        // Update the observations array
-        updateObservations(elapsedTime, aggregatorResult);
-
-        // Update var state
-        medianResult              = converterResultCumulative / timeSinceFirst;
-        updates                   = addition(updates, 1);
-        tellorAggregatorTimestamp = aggregatorTimestamp;
-        lastUpdateTime            = now;
-
-        emit UpdateResult(medianResult);
-
-        // Get final fee receiver
-        address finalFeeReceiver = (feeReceiver == address(0)) ? msg.sender : feeReceiver;
-
-        // Send the reward
-        rewardRelayer.reimburseCaller(finalFeeReceiver);
     }
     /**
     * @notice Push new observation data in the observation array
