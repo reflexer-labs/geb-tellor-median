@@ -44,7 +44,7 @@ contract TellorRelayerTest is DSTest {
     }
     function testFail_read_null_price() public {
         aggregator.submitValue(queryId, abi.encode(uint256(0)), queryNonce++, queryData);
-
+        hevm.warp(now + timeDelay + 1);
         relayer.read();
     }
     function testFail_read_stale_price() public {
@@ -56,7 +56,8 @@ contract TellorRelayerTest is DSTest {
     function test_read() public {
         aggregator.submitValue(queryId, abi.encode(uint256(1 ether)), queryNonce++, queryData);
         hevm.warp(now + timeDelay + 1);
-        relayer.read();
+        uint median = relayer.read();
+        assertEq(median, 1 ether);
     }
     function test_getResultWithValidity_null_price() public {
         aggregator.submitValue(queryId, abi.encode(uint256(0)), queryNonce++, queryData);
