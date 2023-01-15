@@ -172,28 +172,29 @@ contract TellorPriceFeedMedianizerTest is DSTest {
         assertEq(rai.balanceOf(address(this)), maxCallerReward + callerReward * 2);
     }
 
-    // // TODO: Not working
-    // function test_reward_other_multiple_times() public {
-    //     aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
-    //     hevm.warp(now + timeDelay);
-    //     // First
-    //     tellorMedianizer.updateResult(address(0x123));
-    //     assertEq(rai.balanceOf(address(0x123)), callerReward);
+    function test_reward_other_multiple_times() public {
+        aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
+        hevm.warp(now + timeDelay);
 
-    //     // Second
-    //     hevm.warp(now + tellorMedianizer.periodSize());
-    //     aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
-    //     tellorMedianizer.updateResult(address(0x123));
-    //     assertEq(rai.balanceOf(address(0x123)), callerReward * 2);
+        // First - minReward
+        tellorMedianizer.updateResult(address(0x123));
+        assertEq(rai.balanceOf(address(0x123)), callerReward);
 
-    //     for (uint i = 0; i < 10; i++) {
-    //       hevm.warp(now + periodSize);
-    //       aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
-    //       tellorMedianizer.updateResult(address(0x123));
-    //     }
+        // Second - minReward
+        hevm.warp(now + tellorMedianizer.periodSize());
+        aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
+        tellorMedianizer.updateResult(address(0x123));
+        assertEq(rai.balanceOf(address(0x123)), callerReward * 2);
 
-    //     assertEq(rai.balanceOf(address(0x123)), callerReward * 12);
-    // }
+        for (uint i = 0; i < 10; i++) { // maxReward
+          hevm.warp(now + periodSize);
+          aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);
+          hevm.warp(now + 1 hours);
+          tellorMedianizer.updateResult(address(0x123));
+        }
+
+        assertEq(rai.balanceOf(address(0x123)), callerReward * 2 + maxCallerReward * 10);
+    }
 
     function testFail_read_when_stale() public {
         aggregator.submitValue(queryId, abi.encode(uint(1.1 ether)), queryNonce++, queryData);

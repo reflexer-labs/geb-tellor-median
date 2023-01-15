@@ -156,9 +156,9 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
         require(address(rewardRelayer) != address(0), "TellorPriceFeedMedianizer/null-reward-relayer");
 
         try this.getDataBefore(queryId, block.timestamp - timeDelay) returns (bytes memory _value, uint256 _timestampRetrieved) {
-            
+
             uint256 aggregatorPrice = multiply(abi.decode(_value, (uint256)), 10 ** uint(multiplier));
-            
+
             require(aggregatorPrice > 0, "TellorPriceFeedMedianizer/invalid-price-feed");
 
             require(both(_timestampRetrieved > 0, _timestampRetrieved > tellorAggregatorTimestamp), "TellorPriceFeedMedianizer/invalid-timestamp");
