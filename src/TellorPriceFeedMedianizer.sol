@@ -47,13 +47,13 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
     // Last timestamp when the median was updated
     uint256 public  lastUpdateTime;                 // [unix timestamp]
     // Multiplier for the Tellor price feed in order to scaled it to 18 decimals.
-    uint8   public immutable multiplier = 0;
+    uint8   public constant multiplier = 0;
     // Time delay to get prices before (15 minutes)
-    uint256 public immutable timeDelay = 900;
+    uint256 public constant timeDelay = 900;
 
     // You want to change these every deployment
     uint256 public staleThreshold = 3;
-    bytes32 public immutable symbol         = "ethusd";
+    bytes32 public constant symbol         = "ethusd";
 
     // Tellor
     bytes32 public immutable queryId;

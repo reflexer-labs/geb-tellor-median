@@ -49,7 +49,7 @@ contract TellorTWAP is GebMath, UsingTellor {
     // Latest result
     uint256 private medianResult;                   // [wad]
     // Time delay to get prices before (15 minutes)
-    uint256 public immutable timeDelay = 900;
+    uint256 public constant timeDelay = 900;
     /**
       The ideal amount of time over which the moving average should be computed, e.g. 24 hours.
       In practice it can and most probably will be different than the actual window over which the contract medianizes.
@@ -66,7 +66,7 @@ contract TellorTWAP is GebMath, UsingTellor {
     
     // You want to change these every deployment
     uint256 public staleThreshold = 3;
-    bytes32 public immutable symbol         = "ethusd";
+    bytes32 public constant symbol         = "ethusd";
 
     // Tellor
     bytes32 public immutable queryId;

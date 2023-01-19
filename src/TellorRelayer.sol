@@ -33,14 +33,14 @@ contract TellorRelayer is GebMath, UsingTellor {
 
     // --- Variables ---
     // Multiplier for the Tellor price feed in order to scaled it to 18 decimals.
-    uint8   public immutable multiplier = 0;
+    uint8   public constant multiplier = 0;
     // Time threshold after which a Tellor response is considered stale
     uint256 public staleThreshold;
 
-    bytes32 public immutable symbol = "ethusd";
+    bytes32 public constant symbol = "ethusd";
 
     // Time delay to get prices before (15 minutes)
-    uint256 public immutable timeDelay = 900;
+    uint256 public constant timeDelay = 900;
 
     // Tellor
     bytes32 public immutable queryId;
