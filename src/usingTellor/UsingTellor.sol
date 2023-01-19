@@ -174,67 +174,6 @@ contract UsingTellor is IERC2362 {
         return tellor.getIndexForDataBefore(_queryId, _timestamp);
     }
 
-    // /**
-    //  * @dev Retrieves multiple uint256 values before the specified timestamp
-    //  * @param _queryId the unique id of the data query
-    //  * @param _timestamp the timestamp before which to search for values
-    //  * @param _maxAge the maximum number of seconds before the _timestamp to search for values
-    //  * @param _maxCount the maximum number of values to return
-    //  * @return _values the values retrieved, ordered from oldest to newest
-    //  * @return _timestamps the timestamps of the values retrieved
-    //  */
-    // function getMultipleValuesBefore(
-    //     bytes32 _queryId,
-    //     uint256 _timestamp,
-    //     uint256 _maxAge,
-    //     uint256 _maxCount
-    // )
-    //     public
-    //     view
-    //     returns (bytes[] memory _values, uint256[] memory _timestamps)
-    // {
-    //     // get index of first possible value
-    //     (bool _ifRetrieve, uint256 _startIndex) = getIndexForDataAfter(
-    //         _queryId,
-    //         _timestamp - _maxAge
-    //     );
-    //     // no value within range
-    //     if (!_ifRetrieve) {
-    //         return (new bytes[](0), new uint256[](0));
-    //     }
-    //     uint256 _endIndex;
-    //     // get index of last possible value
-    //     (_ifRetrieve, _endIndex) = getIndexForDataBefore(_queryId, _timestamp);
-    //     // no value before _timestamp
-    //     if (!_ifRetrieve) {
-    //         return (new bytes[](0), new uint256[](0));
-    //     }
-    //     uint256 _valCount = 0;
-    //     uint256 _index = 0;
-    //     uint256[] memory _timestampsArrayTemp = new uint256[](_maxCount);
-    //     // generate array of non-disputed timestamps within range
-    //     while (_valCount < _maxCount && _endIndex + 1 - _index > _startIndex) {
-    //         uint256 _timestampRetrieved = getTimestampbyQueryIdandIndex(
-    //             _queryId,
-    //             _endIndex - _index
-    //         );
-    //         if (!isInDispute(_queryId, _timestampRetrieved)) {
-    //             _timestampsArrayTemp[_valCount] = _timestampRetrieved;
-    //             _valCount++;
-    //         }
-    //         _index++;
-    //     }
-
-    //     bytes[] memory _valuesArray = new bytes[](_valCount);
-    //     uint256[] memory _timestampsArray = new uint256[](_valCount);
-    //     // retrieve values and reverse timestamps order
-    //     for (uint256 _i = 0; _i < _valCount; _i++) {
-    //         _timestampsArray[_i] = _timestampsArrayTemp[_valCount - 1 - _i];
-    //         _valuesArray[_i] = retrieveData(_queryId, _timestampsArray[_i]);
-    //     }
-    //     return (_valuesArray, _timestampsArray);
-    // }
-
     /**
      * @dev Counts the number of values that have been submitted for the queryId
      * @param _queryId the id to look up
