@@ -60,7 +60,7 @@ contract TellorTWAP is GebMath, UsingTellor {
     // Total number of updates
     uint256 public updates;
     // Multiplier for the tellor result
-    uint8   public immutable multiplier = 1;
+    uint8   public multiplier = 1;
     // Number of updates in the window
     uint8   public immutable granularity;
     
