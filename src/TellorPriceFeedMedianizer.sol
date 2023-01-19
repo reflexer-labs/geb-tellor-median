@@ -47,16 +47,16 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
     // Last timestamp when the median was updated
     uint256 public  lastUpdateTime;                 // [unix timestamp]
     // Multiplier for the Tellor price feed in order to scaled it to 18 decimals.
-    uint8   public  multiplier = 0;
+    uint8   public immutable multiplier = 0;
     // Time delay to get prices before (15 minutes)
-    uint256 public timeDelay = 900;
+    uint256 public immutable timeDelay = 900;
 
     // You want to change these every deployment
     uint256 public staleThreshold = 3;
-    bytes32 public symbol         = "ethusd";
+    bytes32 public immutable symbol         = "ethusd";
 
     // Tellor
-    bytes32 public queryId;
+    bytes32 public immutable queryId;
 
     // --- Events ---
     event AddAuthorization(address account);
@@ -155,7 +155,7 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
         // The relayer must not be null
         require(address(rewardRelayer) != address(0), "TellorPriceFeedMedianizer/null-reward-relayer");
 
-        try this.getDataBefore(queryId, block.timestamp - timeDelay) returns (bytes memory _value, uint256 _timestampRetrieved) {
+        try this.getDataBefore(queryId, subtract(block.timestamp, timeDelay)) returns (bytes memory _value, uint256 _timestampRetrieved) {
 
             uint256 aggregatorPrice = multiply(abi.decode(_value, (uint256)), 10 ** uint(multiplier));
 

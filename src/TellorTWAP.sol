@@ -39,7 +39,7 @@ contract TellorTWAP is GebMath, UsingTellor {
     IncreasingRewardRelayerLike public rewardRelayer;
 
     // Delay between updates after which the reward starts to increase
-    uint256 public periodSize;
+    uint256 public immutable periodSize;
     // Timestamp of the tellor aggregator
     uint256 public tellorAggregatorTimestamp;
     // Last timestamp when the median was updated
@@ -49,27 +49,27 @@ contract TellorTWAP is GebMath, UsingTellor {
     // Latest result
     uint256 private medianResult;                   // [wad]
     // Time delay to get prices before (15 minutes)
-    uint256 public timeDelay = 900;
+    uint256 public immutable timeDelay = 900;
     /**
       The ideal amount of time over which the moving average should be computed, e.g. 24 hours.
       In practice it can and most probably will be different than the actual window over which the contract medianizes.
     **/
-    uint256 public windowSize;
+    uint256 public immutable windowSize;
     // Maximum window size used to determine if the median is 'valid' (close to the real one) or not
     uint256 public maxWindowSize;
     // Total number of updates
     uint256 public updates;
     // Multiplier for the tellor result
-    uint8   public multiplier = 1;
+    uint8   public immutable multiplier = 1;
     // Number of updates in the window
-    uint8   public granularity;
+    uint8   public immutable granularity;
     
     // You want to change these every deployment
     uint256 public staleThreshold = 3;
-    bytes32 public symbol         = "ethusd";
+    bytes32 public immutable symbol         = "ethusd";
 
     // Tellor
-    bytes32 public queryId;
+    bytes32 public immutable queryId;
 
     TellorObservation[] public tellorObservations;
 
@@ -227,7 +227,7 @@ contract TellorTWAP is GebMath, UsingTellor {
         // Check delay between calls
         require(elapsedTime >= periodSize, "TellorTWAP/wait-more");
 
-        try this.getDataBefore(queryId, block.timestamp - timeDelay) returns (bytes memory _value, uint256 _timestampRetrieved) {
+        try this.getDataBefore(queryId, subtract(block.timestamp, timeDelay)) returns (bytes memory _value, uint256 _timestampRetrieved) {
           uint256 aggregatorResult     = abi.decode(_value, (uint256));
 
           require(aggregatorResult > 0, "TellorTWAP/invalid-feed-result");
