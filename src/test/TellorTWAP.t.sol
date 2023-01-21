@@ -40,6 +40,7 @@ contract TellorTWAPTest is DSTest {
     uint256 perSecondCallerRewardIncrease = 1000192559420674483977255848; // 100% over one hour
     uint8   granularity                   = 4;
     uint8   multiplier                    = 1;
+    uint256 timeDelay                     = 900; // 15 minutes
 
     function setUp() public {
         hevm = Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
@@ -51,7 +52,10 @@ contract TellorTWAPTest is DSTest {
         queryNonce = 0;
 
         aggregator = new TellorPlayground();
+        // Add values to aggregator and jump 15 min ahead so tests have data to retrieve
         aggregator.submitValue(queryId, abi.encode(uint256(120 * 10**9)), queryNonce++, queryData);  // update tellor a first time to ensure getDataBefore works
+
+        hevm.warp(now + timeDelay);
 
         // Create token
         rai = new DSToken("RAI", "RAI");
@@ -61,8 +65,10 @@ contract TellorTWAPTest is DSTest {
         treasury = new MockTreasury(address(rai));
         rai.transfer(address(treasury), initTokenAmount);
 
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -112,6 +118,7 @@ contract TellorTWAPTest is DSTest {
         for (uint i = 0; i < values.length; i++) {
             // aggregator.modifyParameters(int256(values[i]), now);
             aggregator.submitValue(queryId, abi.encode(values[i]), queryNonce++, queryData);
+            hevm.warp(now + timeDelay + 1);
             tellorTWAP.updateResult(alice);
 
             //check if within granularity
@@ -121,7 +128,7 @@ contract TellorTWAPTest is DSTest {
             if(i == values.length - granularity - 1)
                 periodStart = now;
 
-            if(i != values.length -1) hevm.warp(now + intervals[i]);
+            if(i != values.length -1) hevm.warp(now + intervals[i] - timeDelay - 1);
         }
 
         return converterResultCumulative / (now - periodStart);
@@ -159,8 +166,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_query_id() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           bytes32(0),
           windowSize,
           maxWindowSize,
@@ -169,8 +177,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_granularity() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -179,8 +188,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_multiplier() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -189,8 +199,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_null_window_size() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           0,
           maxWindowSize,
@@ -199,8 +210,9 @@ contract TellorTWAPTest is DSTest {
         );
     }
     function testFail_setup_window_not_evenly_divisible() public {
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           windowSize,
           maxWindowSize,
@@ -222,7 +234,7 @@ contract TellorTWAPTest is DSTest {
         assertEq(tellorTWAP.staleThreshold(), 2);
     }
     function testFail_change_stale_threshold_invalid() public {
-        tellorTWAP.modifyParameters("staleThreshold", 1);
+        tellorTWAP.modifyParameters("staleThreshold", 0);
     }
     function testFail_read_before_passing_granularity() public {
         hevm.warp(now + 3599);
@@ -295,8 +307,12 @@ contract TellorTWAPTest is DSTest {
         assertEq(timestamp, now);
         assertEq(timeAdjustedResult, 120 * 10**9 * tellorTWAP.periodSize());
     }
+
     function test_wait_more_than_maxUpdateCallerReward_since_last_update() public {
         relayer.modifyParameters("maxRewardIncreaseDelay", 6 hours);
+
+        aggregator.submitValue(queryId, abi.encode(uint256(130 * 10**9)), queryNonce++, queryData);
+        hevm.warp(now + tellorTWAP.periodSize());
 
         uint maxRewardDelay = 100;
         tellorTWAP.updateResult(alice);
@@ -367,9 +383,11 @@ contract TellorTWAPTest is DSTest {
         treasury = new MockTreasury(address(rai));
         rai.transfer(address(treasury), initTokenAmount);
 
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+
         // Create the TWAP
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           2 hours,
           4 hours,
@@ -428,9 +446,11 @@ contract TellorTWAPTest is DSTest {
         treasury = new MockTreasury(address(rai));
         rai.transfer(address(treasury), initTokenAmount);
 
+        address payable aggregatorAddress = address(uint160(address(aggregator)));
+
         // Create the TWAP
         tellorTWAP = new TellorTWAP(
-          address(aggregator),
+          aggregatorAddress,
           queryId,
           2 hours,
           4 hours,

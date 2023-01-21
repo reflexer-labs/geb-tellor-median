@@ -33,14 +33,17 @@ contract TellorRelayer is GebMath, UsingTellor {
 
     // --- Variables ---
     // Multiplier for the Tellor price feed in order to scaled it to 18 decimals.
-    uint8   public multiplier = 0;
+    uint8   public constant multiplier = 0;
     // Time threshold after which a Tellor response is considered stale
     uint256 public staleThreshold;
 
-    bytes32 public symbol = "ethusd";
+    bytes32 public constant symbol = "ethusd";
+
+    // Time delay to get prices before (15 minutes)
+    uint256 public constant timeDelay = 900;
 
     // Tellor
-    bytes32 public queryId;
+    bytes32 public immutable queryId;
 
     // --- Events ---
     event AddAuthorization(address account);
@@ -55,7 +58,7 @@ contract TellorRelayer is GebMath, UsingTellor {
     );
 
     constructor(
-      address tellorAddress_,
+      address payable tellorAddress_,
       bytes32 queryId_,
       uint256 staleThreshold_
     ) public UsingTellor(tellorAddress_) {
@@ -98,27 +101,25 @@ contract TellorRelayer is GebMath, UsingTellor {
     **/
     function read() external view returns (uint256) {
         // Fetch values from Tellor
-        (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
-            getCurrentValue(queryId);
-        require(success, "TellorTWAP/failed-to-query-tellor");
-
-        uint256 medianPrice = multiply(abi.decode(tellorResponse, (uint256)), 10 ** uint(multiplier));
-
-        require(both(medianPrice > 0, subtract(now, aggregatorTimestamp) <= staleThreshold), "TellorRelayer/invalid-price-feed");
-        return medianPrice;
+        try this.getDataBefore(queryId, subtract(block.timestamp, timeDelay)) returns (bytes memory _value, uint256 _timestampRetrieved) {
+            uint256 medianPrice = multiply(abi.decode(_value, (uint256)), 10 ** uint(multiplier));
+            require(both(medianPrice > 0, subtract(now, _timestampRetrieved) <= staleThreshold), "TellorRelayer/invalid-price-feed");
+            return medianPrice;
+        } catch {
+            revert("TellorRelayer/failed-to-query-tellor");
+        }
     }
     /**
     * @notice Fetch the latest medianResult and whether it is valid or not
     **/
     function getResultWithValidity() external view returns (uint256, bool) {
         // Fetch values from Tellor
-        (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
-            getCurrentValue(queryId);
-        require(success, "TellorTWAP/failed-to-query-tellor");
-
-        uint256 medianPrice = multiply(abi.decode(tellorResponse, (uint256)), 10 ** uint(multiplier));
-
-        return (medianPrice, both(medianPrice > 0, subtract(now, aggregatorTimestamp) <= staleThreshold));
+        try this.getDataBefore(queryId, subtract(block.timestamp, timeDelay)) returns (bytes memory _value, uint256 _timestampRetrieved) {
+            uint256 medianPrice = multiply(abi.decode(_value, (uint256)), 10 ** uint(multiplier));
+            return (medianPrice, both(medianPrice > 0, subtract(now, _timestampRetrieved) <= staleThreshold));
+        } catch  {
+            revert("TellorRelayer/failed-to-query-tellor");
+        }
     }
 
     // --- Median Updates ---

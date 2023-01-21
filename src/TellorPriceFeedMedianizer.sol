@@ -47,14 +47,16 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
     // Last timestamp when the median was updated
     uint256 public  lastUpdateTime;                 // [unix timestamp]
     // Multiplier for the Tellor price feed in order to scaled it to 18 decimals.
-    uint8   public  multiplier = 0;
+    uint8   public constant multiplier = 0;
+    // Time delay to get prices before (15 minutes)
+    uint256 public constant timeDelay = 900;
 
     // You want to change these every deployment
     uint256 public staleThreshold = 3;
-    bytes32 public symbol         = "ethusd";
+    bytes32 public constant symbol         = "ethusd";
 
     // Tellor
-    bytes32 public queryId;
+    bytes32 public immutable queryId;
 
     // --- Events ---
     event AddAuthorization(address account);
@@ -70,7 +72,7 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
     event UpdateResult(uint256 medianPrice, uint256 lastUpdateTime);
 
     constructor(
-      address tellorAddress_,
+      address payable tellorAddress_,
       bytes32 queryId_,
       uint256 periodSize_
     ) public UsingTellor(tellorAddress_) {
@@ -130,14 +132,18 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
     * @notice Fetch the latest medianResult or revert if is is invalid
     **/
     function read() external view returns (uint256) {
-        require(both(medianPrice > 0, subtract(now, tellorAggregatorTimestamp) <= multiply(periodSize, staleThreshold)), "TellorPriceFeedMedianizer/invalid-price-feed");
+        // Use relative timestamp for comparison
+        uint256 relativeNow = subtract(now, timeDelay);
+        require(both(medianPrice > 0, subtract(relativeNow, tellorAggregatorTimestamp) <= multiply(periodSize, staleThreshold)), "TellorPriceFeedMedianizer/invalid-price-feed");
         return medianPrice;
     }
     /**
     * @notice Fetch the latest medianResult and whether it is valid or not
     **/
     function getResultWithValidity() external view returns (uint256,bool) {
-        return (medianPrice, both(medianPrice > 0, subtract(now, tellorAggregatorTimestamp) <= multiply(periodSize, staleThreshold)));
+         // Use relative timestamp for comparison
+        uint256 relativeNow = subtract(now, timeDelay);
+        return (medianPrice, both(medianPrice > 0, subtract(relativeNow, tellorAggregatorTimestamp) <= multiply(periodSize, staleThreshold)));
     }
 
     // --- Median Updates ---
@@ -149,28 +155,29 @@ contract TellorPriceFeedMedianizer is GebMath, UsingTellor {
         // The relayer must not be null
         require(address(rewardRelayer) != address(0), "TellorPriceFeedMedianizer/null-reward-relayer");
 
-        (bool success, bytes memory tellorResponse, uint256 aggregatorTimestamp) =
-            getCurrentValue(queryId);
-        require(success, "TellorTWAP/failed-to-query-tellor");
+        try this.getDataBefore(queryId, subtract(block.timestamp, timeDelay)) returns (bytes memory _value, uint256 _timestampRetrieved) {
 
-        uint256 aggregatorPrice = multiply(abi.decode(tellorResponse, (uint256)), 10 ** uint(multiplier));
+            uint256 aggregatorPrice = multiply(abi.decode(_value, (uint256)), 10 ** uint(multiplier));
 
-        // Perform price and time checks
-        require(aggregatorPrice > 0, "TellorPriceFeedMedianizer/invalid-price-feed");
-        require(both(aggregatorTimestamp > 0, aggregatorTimestamp > tellorAggregatorTimestamp), "TellorPriceFeedMedianizer/invalid-timestamp");
+            require(aggregatorPrice > 0, "TellorPriceFeedMedianizer/invalid-price-feed");
 
-        // Update state
-        medianPrice               = multiply(uint(aggregatorPrice), 10 ** uint(multiplier));
-        tellorAggregatorTimestamp = aggregatorTimestamp;
-        lastUpdateTime            = now;
+            require(both(_timestampRetrieved > 0, _timestampRetrieved > tellorAggregatorTimestamp), "TellorPriceFeedMedianizer/invalid-timestamp");
 
-        // Emit the event
-        emit UpdateResult(medianPrice, lastUpdateTime);
+            // Update state
+            medianPrice               = multiply(uint(aggregatorPrice), 10 ** uint(multiplier));
+            tellorAggregatorTimestamp = _timestampRetrieved;
+            lastUpdateTime            = now;
 
-        // Get final fee receiver
-        address finalFeeReceiver = (feeReceiver == address(0)) ? msg.sender : feeReceiver;
+            // Emit the event
+            emit UpdateResult(medianPrice, lastUpdateTime);
 
-        // Send the reward
-        rewardRelayer.reimburseCaller(finalFeeReceiver);
+            // Get final fee receiver
+            address finalFeeReceiver = (feeReceiver == address(0)) ? msg.sender : feeReceiver;
+
+            // Send the reward
+            rewardRelayer.reimburseCaller(finalFeeReceiver);
+        } catch {
+            revert("TellorTWAP/failed-to-query-tellor");
+        }
     }
 }

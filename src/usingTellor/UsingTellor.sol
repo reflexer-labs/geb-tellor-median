@@ -1,81 +1,161 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.7;
+pragma experimental ABIEncoderV2;
 
 import "./interface/ITellor.sol";
+import "./interface/IERC2362.sol";
+import "./interface/IMappingContract.sol";
 
 /**
- * @title UserContract
- * This contract allows for easy integration with the Tellor System
- * by helping smart contracts to read data from Tellor
+ @author Tellor Inc
+ @title UsingTellor
+ @dev This contract helps smart contracts read data from Tellor
  */
-contract UsingTellor {
+contract UsingTellor is IERC2362 {
     ITellor public tellor;
+    IMappingContract public idMappingContract;
 
     /*Constructor*/
     /**
-     * @dev the constructor sets the tellor address in storage
-     * @param _tellor is the TellorMaster address
+     * @dev the constructor sets the oracle address in storage
+     * @param _tellor is the Tellor Oracle address
      */
-    constructor(address _tellor) public {
+    constructor(address payable _tellor) public {
         tellor = ITellor(_tellor);
     }
 
     /*Getters*/
     /**
-     * @dev Allows the user to get the latest value for the queryId specified
-     * @param _queryId is the id to look up the value for
-     * @return _ifRetrieve bool true if non-zero value successfully retrieved
+     * @dev Retrieves the next value for the queryId after the specified timestamp
+     * @param _queryId is the queryId to look up the value for
+     * @param _timestamp after which to search for next value
      * @return _value the value retrieved
-     * @return _timestampRetrieved the retrieved value's timestamp
+     * @return _timestampRetrieved the value's timestamp
      */
-    function getCurrentValue(bytes32 _queryId)
+    function getDataAfter(bytes32 _queryId, uint256 _timestamp)
         public
         view
-        returns (
-            bool _ifRetrieve,
-            bytes memory _value,
-            uint256 _timestampRetrieved
-        )
+        returns (bytes memory _value, uint256 _timestampRetrieved)
     {
-        uint256 _count = getNewValueCountbyQueryId(_queryId);
-
-        if (_count == 0) {
-            return (false, bytes(""), 0);
+        (bool _found, uint256 _index) = getIndexForDataAfter(
+            _queryId,
+            _timestamp
+        );
+        if (!_found) {
+            return ("", 0);
         }
-        uint256 _time = getTimestampbyQueryIdandIndex(_queryId, _count - 1);
-        _value = retrieveData(_queryId, _time);
-        if (keccak256(_value) != keccak256(bytes("")))
-            return (true, _value, _time);
-        return (false, bytes(""), _time);
+        _timestampRetrieved = getTimestampbyQueryIdandIndex(_queryId, _index);
+        _value = retrieveData(_queryId, _timestampRetrieved);
+        return (_value, _timestampRetrieved);
     }
 
     /**
      * @dev Retrieves the latest value for the queryId before the specified timestamp
      * @param _queryId is the queryId to look up the value for
      * @param _timestamp before which to search for latest value
-     * @return _ifRetrieve bool true if able to retrieve a non-zero value
      * @return _value the value retrieved
      * @return _timestampRetrieved the value's timestamp
      */
     function getDataBefore(bytes32 _queryId, uint256 _timestamp)
-        public
+        external
         view
-        returns (
-            bool _ifRetrieve,
-            bytes memory _value,
-            uint256 _timestampRetrieved
-        )
+        returns (bytes memory _value, uint256 _timestampRetrieved)
     {
-        (bool _found, uint256 _index) = getIndexForDataBefore(
+        (, _value, _timestampRetrieved) = tellor.getDataBefore(
             _queryId,
             _timestamp
         );
-        if (!_found) return (false, bytes(""), 0);
-        uint256 _time = getTimestampbyQueryIdandIndex(_queryId, _index);
-        _value = retrieveData(_queryId, _time);
-        if (keccak256(_value) != keccak256(bytes("")))
-            return (true, _value, _time);
-        return (false, bytes(""), 0);
+    }
+
+    /**
+     * @dev Retrieves latest array index of data before the specified timestamp for the queryId
+     * @param _queryId is the queryId to look up the index for
+     * @param _timestamp is the timestamp before which to search for the latest index
+     * @return _found whether the index was found
+     * @return _index the latest index found before the specified timestamp
+     */
+    // slither-disable-next-line calls-loop
+    function getIndexForDataAfter(bytes32 _queryId, uint256 _timestamp)
+        public
+        view
+        returns (bool _found, uint256 _index)
+    {
+        uint256 _count = getNewValueCountbyQueryId(_queryId);
+        if (_count == 0) return (false, 0);
+        _count--;
+        bool _search = true; // perform binary search
+        uint256 _middle = 0;
+        uint256 _start = 0;
+        uint256 _end = _count;
+        uint256 _timestampRetrieved;
+        // checking boundaries to short-circuit the algorithm
+        _timestampRetrieved = getTimestampbyQueryIdandIndex(_queryId, _end);
+        if (_timestampRetrieved <= _timestamp) return (false, 0);
+        _timestampRetrieved = getTimestampbyQueryIdandIndex(_queryId, _start);
+        if (_timestampRetrieved > _timestamp) {
+            // candidate found, check for disputes
+            _search = false;
+        }
+        // since the value is within our boundaries, do a binary search
+        while (_search) {
+            _middle = (_end + _start) / 2;
+            _timestampRetrieved = getTimestampbyQueryIdandIndex(
+                _queryId,
+                _middle
+            );
+            if (_timestampRetrieved > _timestamp) {
+                // get immediate previous value
+                uint256 _prevTime = getTimestampbyQueryIdandIndex(
+                    _queryId,
+                    _middle - 1
+                );
+                if (_prevTime <= _timestamp) {
+                    // candidate found, check for disputes
+                    _search = false;
+                } else {
+                    // look from start to middle -1(prev value)
+                    _end = _middle - 1;
+                }
+            } else {
+                // get immediate next value
+                uint256 _nextTime = getTimestampbyQueryIdandIndex(
+                    _queryId,
+                    _middle + 1
+                );
+                if (_nextTime > _timestamp) {
+                    // candidate found, check for disputes
+                    _search = false;
+                    _middle++;
+                    _timestampRetrieved = _nextTime;
+                } else {
+                    // look from middle + 1(next value) to end
+                    _start = _middle + 1;
+                }
+            }
+        }
+        // candidate found, check for disputed values
+        if (!isInDispute(_queryId, _timestampRetrieved)) {
+            // _timestampRetrieved is correct
+            return (true, _middle);
+        } else {
+            // iterate forward until we find a non-disputed value
+            while (
+                isInDispute(_queryId, _timestampRetrieved) && _middle < _count
+            ) {
+                _middle++;
+                _timestampRetrieved = getTimestampbyQueryIdandIndex(
+                    _queryId,
+                    _middle
+                );
+            }
+            if (
+                _middle == _count && isInDispute(_queryId, _timestampRetrieved)
+            ) {
+                return (false, 0);
+            }
+            // _timestampRetrieved is correct
+            return (true, _middle);
+        }
     }
 
     /**
@@ -91,55 +171,7 @@ contract UsingTellor {
         view
         returns (bool _found, uint256 _index)
     {
-        uint256 _count = getNewValueCountbyQueryId(_queryId);
-
-        if (_count > 0) {
-            uint256 middle;
-            uint256 start = 0;
-            uint256 end = _count - 1;
-            uint256 _time;
-
-            //Checking Boundaries to short-circuit the algorithm
-            _time = getTimestampbyQueryIdandIndex(_queryId, start);
-            if (_time >= _timestamp) return (false, 0);
-            _time = getTimestampbyQueryIdandIndex(_queryId, end);
-            if (_time < _timestamp) return (true, end);
-
-            //Since the value is within our boundaries, do a binary search
-            while (true) {
-                middle = (end - start) / 2 + 1 + start;
-                _time = getTimestampbyQueryIdandIndex(_queryId, middle);
-                if (_time < _timestamp) {
-                    //get immediate next value
-                    uint256 _nextTime = getTimestampbyQueryIdandIndex(
-                        _queryId,
-                        middle + 1
-                    );
-                    if (_nextTime >= _timestamp) {
-                        //_time is correct
-                        return (true, middle);
-                    } else {
-                        //look from middle + 1(next value) to end
-                        start = middle + 1;
-                    }
-                } else {
-                    uint256 _prevTime = getTimestampbyQueryIdandIndex(
-                        _queryId,
-                        middle - 1
-                    );
-                    if (_prevTime < _timestamp) {
-                        // _prevtime is correct
-                        return (true, middle - 1);
-                    } else {
-                        //look from start to middle -1(prev value)
-                        end = middle - 1;
-                    }
-                }
-                //We couldn't find a value
-                //if(middle - 1 == start || middle == _count) return (false, 0);
-            }
-        }
-        return (false, 0);
+        return tellor.getIndexForDataBefore(_queryId, _timestamp);
     }
 
     /**
@@ -152,37 +184,35 @@ contract UsingTellor {
         view
         returns (uint256)
     {
-        //tellorx check rinkeby/ethereum
-        if (
-            tellor == ITellor(0x18431fd88adF138e8b979A7246eb58EA7126ea16) ||
-            tellor == ITellor(0xe8218cACb0a5421BC6409e498d9f8CC8869945ea)
-        ) {
-            return tellor.getTimestampCountById(_queryId);
-        } else {
-            return tellor.getNewValueCountbyQueryId(_queryId);
-        }
+        return tellor.getNewValueCountbyQueryId(_queryId);
     }
 
-    // /**
-    //  * @dev Gets the timestamp for the value based on their index
-    //  * @param _queryId is the id to look up
-    //  * @param _index is the value index to look up
-    //  * @return uint256 timestamp
-    //  */
+    /**
+     * @dev Returns the address of the reporter who submitted a value for a data ID at a specific time
+     * @param _queryId is ID of the specific data feed
+     * @param _timestamp is the timestamp to find a corresponding reporter for
+     * @return address of the reporter who reported the value for the data ID at the given timestamp
+     */
+    function getReporterByTimestamp(bytes32 _queryId, uint256 _timestamp)
+        public
+        view
+        returns (address)
+    {
+        return tellor.getReporterByTimestamp(_queryId, _timestamp);
+    }
+
+    /**
+     * @dev Gets the timestamp for the value based on their index
+     * @param _queryId is the id to look up
+     * @param _index is the value index to look up
+     * @return uint256 timestamp
+     */
     function getTimestampbyQueryIdandIndex(bytes32 _queryId, uint256 _index)
         public
         view
         returns (uint256)
     {
-        //tellorx check rinkeby/ethereum
-        if (
-            tellor == ITellor(0x18431fd88adF138e8b979A7246eb58EA7126ea16) ||
-            tellor == ITellor(0xe8218cACb0a5421BC6409e498d9f8CC8869945ea)
-        ) {
-            return tellor.getReportTimestampByIndex(_queryId, _index);
-        } else {
-            return tellor.getTimestampbyQueryIdandIndex(_queryId, _index);
-        }
+        return tellor.getTimestampbyQueryIdandIndex(_queryId, _index);
     }
 
     /**
@@ -196,29 +226,7 @@ contract UsingTellor {
         view
         returns (bool)
     {
-        ITellor _governance;
-        //tellorx check rinkeby/ethereum
-        if (
-            tellor == ITellor(0x18431fd88adF138e8b979A7246eb58EA7126ea16) ||
-            tellor == ITellor(0xe8218cACb0a5421BC6409e498d9f8CC8869945ea)
-        ) {
-            ITellor _newTellor = ITellor(
-                0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0
-            );
-            _governance = ITellor(
-                _newTellor.addresses(
-                    0xefa19baa864049f50491093580c5433e97e8d5e41f8db1a61108b4fa44cacd93
-                )
-            );
-        } else {
-            _governance = ITellor(tellor.governance());
-        }
-        return
-            _governance
-                .getVoteRounds(
-                    keccak256(abi.encodePacked(_queryId, _timestamp))
-                )
-                .length > 0;
+        return tellor.isInDispute(_queryId, _timestamp);
     }
 
     /**
@@ -232,14 +240,62 @@ contract UsingTellor {
         view
         returns (bytes memory)
     {
-        //tellorx check rinkeby/ethereum
-        if (
-            tellor == ITellor(0x18431fd88adF138e8b979A7246eb58EA7126ea16) ||
-            tellor == ITellor(0xe8218cACb0a5421BC6409e498d9f8CC8869945ea)
-        ) {
-            return tellor.getValueByTimestamp(_queryId, _timestamp);
-        } else {
-            return tellor.retrieveData(_queryId, _timestamp);
+        return tellor.retrieveData(_queryId, _timestamp);
+    }
+
+    /**
+     * @dev allows dev to set mapping contract for valueFor (EIP2362)
+     * @param _addy address of mapping contract
+     */
+    function setIdMappingContract(address _addy) external {
+        require(address(idMappingContract) == address(0));
+        idMappingContract = IMappingContract(_addy);
+    }
+
+    /**
+     * @dev Retrieve most recent int256 value from oracle based on queryId
+     * @param _id being requested
+     * @return _value most recent value submitted
+     * @return _timestamp timestamp of most recent value
+     * @return _statusCode 200 if value found, 404 if not found
+     */
+    function valueFor(bytes32 _id)
+        external
+        view
+        override
+        returns (
+            int256 _value,
+            uint256 _timestamp,
+            uint256 _statusCode
+        )
+    {
+        bytes32 _queryId = idMappingContract.getTellorID(_id);
+        bytes memory _valueBytes;
+        (_valueBytes, _timestamp) = this.getDataBefore(
+            _queryId,
+            block.timestamp + 1
+        );
+        if (_timestamp == 0) {
+            return (0, 0, 404);
+        }
+        uint256 _valueUint = _sliceUint(_valueBytes);
+        _value = int256(_valueUint);
+        return (_value, _timestamp, 200);
+    }
+
+    // Internal functions
+    /**
+     * @dev Convert bytes to uint256
+     * @param _b bytes value to convert to uint256
+     * @return _number uint256 converted from bytes
+     */
+    function _sliceUint(bytes memory _b)
+        internal
+        pure
+        returns (uint256 _number)
+    {
+        for (uint256 _i = 0; _i < _b.length; _i++) {
+            _number = _number * 256 + uint8(_b[_i]);
         }
     }
 }
